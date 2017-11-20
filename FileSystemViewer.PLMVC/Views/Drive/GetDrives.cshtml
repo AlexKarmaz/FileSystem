@@ -1,0 +1,54 @@
+﻿@model IEnumerable<FileSystemViewer.PLMVC.Models.Drive.DriveViewModel>
+@{
+    var uriPath = (string)HttpContext.Current.Request.RequestContext.RouteData.Values["path"];
+    Uri uri = Request.Url;
+}
+
+<div>
+    <div class="pathPlace">The computer\\</div>
+</div>
+
+
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DriveType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalFreeSpace)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr class="item drive" id="item-@item.Name">
+                <th>
+                    <img src="~/Content/images/drive.png" />
+                </th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DriveType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalSize)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalFreeSpace)
+                </td>
+            </tr>
+        }
+
+    </table>
+
+<script src="~/Scripts/CustomScripts/GetDrivesScript.js"></script>
+<script src="~/Scripts/CustomScripts/AjaxConfiguration.js"></script>

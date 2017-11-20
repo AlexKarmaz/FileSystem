@@ -1,0 +1,20 @@
+﻿@model IEnumerable<FileSystemViewer.PLMVC.Models.FolderTreeViewModel>
+           
+<div class="hidden" id="lastTreePath">
+    @ViewBag.LastPath
+</div>
+
+@foreach (var item in Model)
+{
+    <div class="treeDriveItem" id="treeItem-@item.Name">
+        <div class="treeDriveChanger" id="@item.Name"> > </div>
+        <div class="folderTreeIcon">
+            <img src="~/Content/images/drive.png" />
+        </div>
+        @Html.DisplayFor(modelItem => item.Name)
+    </div>
+    <div class="treeConteiner hidden" id="treeConteiner-@item.Name"></div>
+}
+
+<script src="~/Scripts/CustomScripts/AjaxConfiguration.js"></script>
+<script src="~/Scripts/CustomScripts/GetDriversTreeScripts.js"></script>

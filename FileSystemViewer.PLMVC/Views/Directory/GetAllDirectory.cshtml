@@ -1,0 +1,113 @@
+﻿@using System.Web.Optimization
+@model IEnumerable<FileSystemViewer.PLMVC.Models.ExplorerViewModel>
+           
+
+<div class="editBar">
+@if (User.IsInRole("admin"))
+{
+    <div id="modal">
+        @Html.Action("CreateFolder", "Directory", new {path = @ViewBag.LastPath})
+        @Html.Action("CreateFile", "Directory", new {path = @ViewBag.LastPath})
+    </div>
+}
+@using (Ajax.BeginForm("Search", "Directory", new { path = @ViewBag.LastPath }, new AjaxOptions { UpdateTargetId = "main_container", LoadingElementId = "loading", HttpMethod = "GET" }))
+{
+    <div class="search">
+        <input type="text" name="searchString" placeholder="Search..">
+        <button type="submit" class="searchButton">
+            <i class="glyphicon glyphicon-search search-sumbl"></i>
+        </button>
+    </div>
+}
+</div>
+
+<div class="hidden" id="lastPath">
+    @ViewBag.LastPath
+</div>
+
+<div class="url-row">
+    <img src="~/Content/images/back.png" id="back-image"/>
+    <div class="pathPlace">The computer\\@ViewBag.LastPath</div>
+</div>
+
+<table class="table" id="explorer-table">
+    <tr>
+        <th></th>
+        <th class="tableHederitem">
+            @Ajax.ActionLink("Name", "GetAllDirectoryByName", "Directory", new { path = @ViewBag.LastPath }, new AjaxOptions { UpdateTargetId = "main_container", OnFailure = "OnError", LoadingElementId = "loading", HttpMethod = "GET"})
+        </th>
+        <th class="tableHederitem">
+            @Ajax.ActionLink("Type", "GetAllDirectoryByType", "Directory", new { path = @ViewBag.LastPath }, new AjaxOptions { UpdateTargetId = "main_container", OnFailure = "OnError", LoadingElementId = "loading", HttpMethod = "GET" })
+        </th>
+        <th style="color: #337ab7">
+            @Html.DisplayNameFor(model => model.LastAccessTime)
+        </th>
+        <th style ="color: #337ab7">
+            @Html.DisplayNameFor(model => model.Size)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.Type == "Folder")
+        {
+            <tr class="item folder" id="item-@item.Name">
+                <td>
+                    <img src="~/Content/images/folder.png" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastAccessTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Size)
+                </td>
+                <td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        @Ajax.ActionLink("Delete", "DeleteDirectory", "Directory", new { path = @ViewBag.LastPath + item.Name + "\\" }, new AjaxOptions { UpdateTargetId = "main_container", OnFailure = "OnError", LoadingElementId = "loading", HttpMethod = "GET", Confirm = "Do you really want to delete this folder?" })
+                    }
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr class="item" id="item-@item.Name">
+                <td>
+                    <img src="~/Content/images/file.png" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastAccessTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Size)
+                </td>
+                <td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        @Ajax.ActionLink("Delete", "DeleteFile", "Directory", new { path = @ViewBag.LastPath + item.Name + "\\" }, new AjaxOptions { UpdateTargetId = "main_container", OnFailure = "OnError", LoadingElementId = "loading", HttpMethod = "GET", Confirm = "Do you really want to delete this file?" })
+                    }
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+
+@Scripts.Render("~/Scripts/CustomScripts/AllDirectoryScripts.js")
+@Scripts.Render("~/Scripts/CustomScripts/AjaxConfiguration.js")
+
+
+

@@ -1,0 +1,39 @@
+﻿@using System.Security.Cryptography
+@using System.Text
+@model IEnumerable<FileSystemViewer.PLMVC.Models.FolderTreeViewModel>
+@foreach (var item in Model)
+{
+    var md5 = MD5.Create();
+    var hash = md5.ComputeHash(Encoding.Default.GetBytes(item.Name));
+    new Guid(hash);
+    item.Id = (new Guid(hash)).ToString();
+
+    if (item.Type == "Folder")
+    {
+        <div class="treeItem" id="treeItemFolder-@item.Id">
+            <div class="treeChanger" id="treeChangerFolder-@item.Id"> > </div>
+            <div class="folderTreeIcon">
+                 <img src="~/Content/images/folder.png"/>
+            </div>
+            @Html.DisplayFor(modelItem => item.Name)
+        </div>
+        <div class="treeConteiner hidden" id="treeConteiner-@item.Id"></div>
+
+        <script src="~/Scripts/CustomScripts/GetAllDirectoryTreeScripts.js"></script>
+
+        <script>
+            signForEvents('@item.Id', '@item.Name', '@ViewBag.LastPath');
+        </script>
+    
+    }
+    else
+    {
+        <div class="treeItem" id="treeItem-@item.Id">
+            <div>   </div>
+            <div class="folderTreeIcon">
+               <img src="~/Content/images/file.png" />
+            </div>
+            @Html.DisplayFor(modelItem => item.Name)
+        </div>
+    }
+}

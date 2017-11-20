@@ -1,0 +1,127 @@
+﻿
+@model IEnumerable<FileSystemViewer.PLMVC.Models.ExplorerSearchViewModel>
+
+<div class="editBar">
+    @if (User.IsInRole("admin"))
+    {
+        <div id="modal">
+            @Html.Action("CreateFolder", "Directory", new { path = @ViewBag.LastPath })
+            @Html.Action("CreateFile", "Directory", new { path = @ViewBag.LastPath })
+        </div>
+    }
+    @using (Ajax.BeginForm("Search", "Directory", new { path = @ViewBag.LastPath }, new AjaxOptions { UpdateTargetId = "main_container", LoadingElementId = "loading", HttpMethod = "GET" }))
+    {
+        <div class="search">
+            <input type="text" name="searchString" placeholder="Search..">
+            <button type="submit" class="searchButton">
+                <i class="glyphicon glyphicon-search search-sumbl"></i>
+            </button>
+        </div>
+    }
+</div>
+
+
+<div class="url-row">
+    <img src="~/Content/images/back.png" id="back-image" />
+    <div class="pathPlace">The computer\\@ViewBag.LastPath</div>
+</div>
+
+<table class="table" id="explorer-table">
+    <tr>
+        <th></th>
+        <th style="color: #337ab7">
+            Name
+        </th>
+        <th style="color: #337ab7">
+            Type
+        </th>
+        <th style="color: #337ab7">
+            Path
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.Type == "Folder")
+        {
+            <tr class="item folder" id="item-@item.Name">
+                <td>
+                    <img src="~/Content/images/folder.png" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td id="path">
+                    @item.Path
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr class="item" id="item-@item.Name">
+                <td>
+                    <img src="~/Content/images/file.png" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td id="path">
+                    @Html.DisplayFor(modelItem => item.Path)
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+<script>
+    @*$(document).ready(function () {
+        $(".folder").dblclick(function () {
+            var newPath = $(this).find('#path').text().trim();
+            var url = "/Directory/GetAllDirectory/" + newPath;
+            url = encodeURI(url);
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (result) {
+                    if (result.Status == 'NotAcceptable') {
+                        alert("You don't have access to the directory");
+                    } else {
+                        $('.item').unbind();
+                        $('#main_container').html(result);
+                    }
+                },
+                error: OnError
+            });
+        });
+
+        $("#back-image").click(function () {
+            var path = "@ViewBag.LastPath";
+            path = path.substr(0, path.length - 2);
+            var lastPathIndex = path.lastIndexOf("\\");
+            path = path.substr(0, lastPathIndex);
+            var url = "/Directory/GetAllDirectory/" + path;
+            url = encodeURI(url);
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (result) {
+                    if (result.Status == 'NotAcceptable') {
+                        alert("You don't have access to the directory");
+                    } else {
+                        $('.item').unbind();
+                        $('#main_container').html(result);
+                    }
+                },
+                error: OnError
+            });
+        });
+    });*@
+</script>
+<script src="~/Scripts/CustomScripts/AjaxConfiguration.js"></script>
+<script src="~/Scripts/CustomScripts/SearchScripts.js"></script>
